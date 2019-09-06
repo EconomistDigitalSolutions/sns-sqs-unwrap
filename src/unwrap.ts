@@ -1,13 +1,21 @@
 import { TypeGuard } from 'generic-type-guard';
 import { isSnsMessage, isSqsEvent } from './guards';
 
+export interface UnwrapOptions {
+  debug: boolean;
+}
+
+const defaults: UnwrapOptions = {
+  debug: false,
+};
+
 /**
  * Unwraps an unknown event received by the Lambda into an event of the expected
  * type, attempting to remove any metadata attached by SNS and SQS if necessary.
  * Throws any error if it cannot parse the event into the given type.
  * @param event the event to unwrap.
  */
-export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined> {
+export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
 
   // If the event is of the given type we can just return it
   if (isType(event)) {
