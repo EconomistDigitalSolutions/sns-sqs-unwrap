@@ -1,2 +1,2 @@
-export { isSnsMessage } from './sns';
-export { isSqsRecord, isSqsEvent } from './sqs';
+export { isSnsMessage, SNSMessage } from './sns';
+export { isSqsRecord, isSqsEvent, SQSEvent, SQSRecord } from './sqs';
