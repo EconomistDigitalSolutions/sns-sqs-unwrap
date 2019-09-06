@@ -78,7 +78,7 @@ describe('unwrap.ts', () => {
         unwrap(input, isMyInput).next();
         fail();
       } catch (err) {
-        fail();
+        console.error(err);
       }
     });
 
@@ -88,7 +88,7 @@ describe('unwrap.ts', () => {
         unwrap(input, isMyInput).next();
         fail();
       } catch (err) {
-        fail();
+        console.error(err);
       }
     });
 
@@ -98,7 +98,7 @@ describe('unwrap.ts', () => {
         unwrap(input, isMyInput).next();
         fail();
       } catch (err) {
-        fail();
+        console.error(err);
       }
     });
 
