@@ -33,18 +33,33 @@ describe('unwrap.ts', () => {
     it('unwraps the input when it is of the expected type', () => {
       try {
         const result = unwrap(input, isMyInput).next().value;
-        expect(result).toBe(input);
+        expect(result).toEqual(input);
       } catch (err) {
         fail();
       }
     });
 
     it('unwraps the input when it comes directly from SQS', () => {
-      fail();
+      const unwrappedInput = input;
+      input = wrapForSqs(input);
+      try {
+        const result = unwrap(input, isMyInput).next().value;
+        expect(result).toEqual(unwrappedInput);
+      } catch (err) {
+        console.error(err);
+        fail();
+      }
     });
 
     it('unwraps the input when it comes from SNS via SQS', () => {
-      fail();
+      const unwrappedInput = input;
+      input = wrapForSns(input);
+      try {
+        const result = unwrap(input, isMyInput).next().value;
+        expect(result).toEqual(unwrappedInput);
+      } catch (err) {
+        fail();
+      }
     });
 
   });
@@ -55,7 +70,7 @@ describe('unwrap.ts', () => {
       try {
         const result = unwrapAll(input, isMyInput);
         expect(result).toHaveLength(1);
-        expect(result[0]).toBe(input);
+        expect(result[0]).toEqual(input);
       } catch (err) {
         console.error(err);
         fail();
@@ -77,7 +92,7 @@ describe('unwrap.ts', () => {
     it('unwraps the first input when it is of the expected type', () => {
       try {
         const result = unwrapFirst(input, isMyInput);
-        expect(result).toBe(input);
+        expect(result).toEqual(input);
       } catch (err) {
         fail();
       }
@@ -91,5 +106,18 @@ describe('unwrap.ts', () => {
       fail();
     });
   });
-
 });
+
+function wrapForSqs(input: unknown) {
+  return {
+    Records: [{
+      body: JSON.stringify(input),
+    }],
+  };
+}
+
+function wrapForSns(input: unknown) {
+  return wrapForSqs({
+    Message: JSON.stringify(input),
+  });
+}
