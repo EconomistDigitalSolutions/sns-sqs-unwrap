@@ -1,5 +1,5 @@
 import { TypeGuard } from 'generic-type-guard';
-import { isSnsMessage, isSqsEvent, SQSEvent, SNSMessage } from './guards';
+import { isSnsMessage, isSqsEvent, SNSMessage, SQSEvent } from './guards';
 
 export interface UnwrapOptions {
   debug: boolean;
