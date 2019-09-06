@@ -50,6 +50,18 @@ describe('unwrap.ts', () => {
       }
     });
 
+    it('unwraps and yields successive inputs when they comes directly from SQS', () => {
+      const unwrappedInput = input;
+      input = wrapForSqs(input);
+      try {
+        const unwrapper = unwrap(input, isMyInput).next();
+        const result = unwrapper.value;
+        expect(result).toEqual(unwrappedInput);
+      } catch (err) {
+        fail();
+      }
+    });
+
     it('unwraps the input when it comes from SNS via SQS', () => {
       const unwrappedInput = input;
       input = wrapForSns(input);
