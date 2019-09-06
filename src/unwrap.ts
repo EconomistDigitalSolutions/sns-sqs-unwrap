@@ -7,7 +7,7 @@ import { isSnsMessage, isSqsEvent } from './guards';
  * Throws any error if it cannot parse the event into the given type.
  * @param event the event to unwrap.
  */
-export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, never, never> {
+export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, never, undefined> {
 
   // If the event is of the given type we can just return it
   if (isType(event)) {
@@ -66,11 +66,8 @@ export function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T {
 export function unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[] {
   const requests: T[] = [];
   const unwrapper = unwrap(event, isType);
-  let request = unwrapper.next();
-  while (request.value) {
-    const foo = request.value;
-    requests.push(foo);
-    request = unwrapper.next();
+  for (const request of unwrapper) {
+    requests.push(request);
   }
   return requests;
 }
