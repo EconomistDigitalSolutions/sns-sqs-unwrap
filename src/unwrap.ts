@@ -1,5 +1,5 @@
 import { TypeGuard } from 'generic-type-guard';
-import { isSnsMessage, isSqsEvent } from './guards';
+import { isSnsMessage, isSqsEvent, SQSEvent, SNSMessage } from './guards';
 
 export interface UnwrapOptions {
   debug: boolean;
@@ -33,10 +33,15 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOpt
    * check each in turn, yielding them as requested.
    */
 
-  if (!isSqsEvent(event)) {
-    throw new Error('unable to unwrap SQS event into expected type');
+  if (isSqsEvent(event)) {
+    yield* unwrapSqsEvent(event, isType);
   }
 
+  throw new Error('unable to unwrap SQS event into expected type');
+
+}
+
+function* unwrapSqsEvent<T>(event: SQSEvent, isType: TypeGuard<T>): Generator<T, T, undefined> {
   for (const record of event.Records) {
 
     const message = JSON.parse(record.body);
@@ -50,16 +55,27 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOpt
       throw new Error('unable to unwrap SNS message into expected type');
     }
 
-    const request = JSON.parse(message.Message);
-
-    if (!isType(request)) {
-      throw new Error('unable to unwrap event into expected type');
-    }
-
-    yield request;
+    yield unwrapSnsMessage(message, isType);
   }
 
   throw new Error('no records');
+}
+
+/**
+ * Unwraps an SNS Message and returns the payload if it is of the
+ * expected type, T. Otherwise throws an error.
+ * @param message the SNS message
+ * @param isType the type guard to assert the type of the result
+ */
+function unwrapSnsMessage<T>(message: SNSMessage, isType: TypeGuard<T>): T {
+
+  const request = JSON.parse(message.Message);
+
+  if (!isType(request)) {
+    throw new Error('unable to unwrap event into expected type');
+  }
+
+  return request;
 }
 
 export function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T {
