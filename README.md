@@ -7,7 +7,16 @@ The consequence of this is that the actual request to your service gets stringif
 
 ## Usage
 ### unwrap
+```typescript
+unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined>
+```
 
 ### unwrapAll
+```typescript
+unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T
+```
 
 ### unwrapFirst
+```typescript
+unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[]
+```
