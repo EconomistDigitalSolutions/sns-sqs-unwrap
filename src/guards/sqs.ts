@@ -1,5 +1,9 @@
 import { isArray, IsInterface, isString } from "generic-type-guard";
 
+export interface SQSRecord {
+  body: string;
+}
+
 /**
  * Type guard for SQSRecords
  */
@@ -9,6 +13,10 @@ export const isSqsRecord =
       body: isString,
     })
     .get();
+
+export interface SQSEvent {
+  Records: SQSRecord[];
+}
 
 /**
  * Type guard for SQSEvents
