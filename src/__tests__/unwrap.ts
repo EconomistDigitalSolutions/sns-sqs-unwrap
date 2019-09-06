@@ -61,6 +61,22 @@ describe('unwrap.ts', () => {
       }
     });
 
+    it('throws an error when the input is not the expected type or an SQS Event', () => {
+      fail();
+    });
+
+    it('throws an error when the input is an SQS Event with no Records', () => {
+      fail();
+    });
+
+    it('throws an error when an SQS Record is not the expected type or an SNS Message', () => {
+      fail();
+    });
+
+    it('throws an error when the SNS Message payload is not the expected type', () => {
+      fail();
+    });
+
   });
 
   describe('unwrapAll', () => {
