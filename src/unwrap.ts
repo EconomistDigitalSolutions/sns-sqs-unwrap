@@ -7,11 +7,11 @@ import { isSnsMessage, isSqsEvent } from './guards';
  * Throws any error if it cannot parse the event into the given type.
  * @param event the event to unwrap.
  */
-export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, never, undefined> {
+export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined> {
 
   // If the event is of the given type we can just return it
   if (isType(event)) {
-    yield event;
+    return event;
   }
 
   /**
@@ -21,17 +21,12 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, n
    * The expectation is that the underlying request will be stringified and
    * passed as the `Message` parameter of a JSON object published to SNS. This
    * object will itself be stringified and passed as the `body` parameter on an
-   * SQS Record. An SQS Event will contain an array of these records. For our
-   * purposes we set the lambda to read in batch sizes of 1 so there should only
-   * ever be a single record in this array.
+   * SQS Record. An SQS Event will contain an array of these records, so we can
+   * check each in turn, yielding them as requested.
    */
 
   if (!isSqsEvent(event)) {
-    throw new Error('unable to unwrap event into expected type');
-  }
-
-  if (event.Records.length <= 0) {
-    throw new Error('unable to unwrap event into expected type');
+    throw new Error('unable to unwrap SQS event into expected type');
   }
 
   for (const record of event.Records) {
@@ -44,7 +39,7 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, n
     }
 
     if (!isSnsMessage(message)) {
-      throw new Error('unable to unwrap event into expected type');
+      throw new Error('unable to unwrap SNS message into expected type');
     }
 
     const request = JSON.parse(message.Message);
@@ -56,7 +51,7 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, n
     yield request;
   }
 
-  throw new Error();
+  throw new Error('no records');
 }
 
 export function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T {
@@ -66,8 +61,12 @@ export function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T {
 export function unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[] {
   const requests: T[] = [];
   const unwrapper = unwrap(event, isType);
-  for (const request of unwrapper) {
-    requests.push(request);
-  }
+
+  let request = unwrapper.next();
+  do {
+    requests.push(request.value);
+    request = unwrapper.next();
+  } while (!request.done);
+
   return requests;
 }
