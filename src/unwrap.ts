@@ -13,13 +13,13 @@ const defaults: UnwrapOptions = {
  * Unwraps an unknown event received by the Lambda into an event of the expected
  * type, attempting to remove any metadata attached by SNS and SQS if necessary.
  * Throws any error if it cannot parse the event into the given type.
- * @param event the event to unwrap.
+ * @param input the event to unwrap.
  */
-export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
+export function* unwrap<T>(input: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
 
   // If the event is of the given type we can just return it
-  if (isType(event)) {
-    return event;
+  if (isType(input)) {
+    return input;
   }
 
   /**
@@ -33,8 +33,8 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOpt
    * check each in turn, yielding them as requested.
    */
 
-  if (isSqsEvent(event)) {
-    yield* unwrapSqsEvent(event, isType);
+  if (isSqsEvent(input)) {
+    yield* unwrapSqsEvent(input, isType);
   }
 
   throw new Error('unable to unwrap SQS event into expected type');
@@ -44,11 +44,11 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOpt
 /**
  * Unwraps an SQS Event, yielding successive objects of type T if possible, throwing
  * an error if not.
- * @param event the SQS Event
+ * @param sqsEvent the SQS Event
  * @param isType the type guard to assert the type of the result
  */
-function* unwrapSqsEvent<T>(event: SQSEvent, isType: TypeGuard<T>): Generator<T, T, undefined> {
-  for (const record of event.Records) {
+function* unwrapSqsEvent<T>(sqsEvent: SQSEvent, isType: TypeGuard<T>): Generator<T, T, undefined> {
+  for (const record of sqsEvent.Records) {
 
     const message = JSON.parse(record.body);
 
@@ -84,13 +84,13 @@ function unwrapSnsMessage<T>(message: SNSMessage, isType: TypeGuard<T>): T {
   return request;
 }
 
-export function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T {
-  return unwrap(event, isType).next().value;
+export function unwrapFirst<T>(input: unknown, isType: TypeGuard<T>): T {
+  return unwrap(input, isType).next().value;
 }
 
-export function unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[] {
+export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
   const requests: T[] = [];
-  const unwrapper = unwrap(event, isType);
+  const unwrapper = unwrap(input, isType);
 
   let request = unwrapper.next();
   do {
