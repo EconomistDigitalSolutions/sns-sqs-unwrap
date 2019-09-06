@@ -39,8 +39,8 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, n
     const message = JSON.parse(record.body);
 
     // Check if the request was sent directly on SQS without SNS
-    if (isType(event)) {
-      yield event;
+    if (isType(message)) {
+      yield message;
     }
 
     if (!isSnsMessage(message)) {
