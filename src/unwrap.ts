@@ -41,6 +41,12 @@ export function* unwrap<T>(event: unknown, isType: TypeGuard<T>, opts: UnwrapOpt
 
 }
 
+/**
+ * Unwraps an SQS Event, yielding successive objects of type T if possible, throwing
+ * an error if not.
+ * @param event the SQS Event
+ * @param isType the type guard to assert the type of the result
+ */
 function* unwrapSqsEvent<T>(event: SQSEvent, isType: TypeGuard<T>): Generator<T, T, undefined> {
   for (const record of event.Records) {
 
