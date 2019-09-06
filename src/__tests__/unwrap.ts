@@ -1,13 +1,13 @@
 import { isBoolean, IsInterface, isNumber, isString, TypeGuard } from "generic-type-guard";
-import { unwrap } from "../unwrap";
+import { unwrap, unwrapAll, unwrapFirst } from "../unwrap";
 
-interface MyEvent {
+interface MyInput {
   foo: string;
   bar: number;
   baz: boolean;
 }
 
-const isMyEvent: TypeGuard<MyEvent> =
+const isMyInput: TypeGuard<MyInput> =
   new IsInterface()
     .withProperties({
       foo: isString,
@@ -16,53 +16,80 @@ const isMyEvent: TypeGuard<MyEvent> =
     })
     .get();
 
-describe('unwrap', () => {
+describe('unwrap.ts', () => {
 
-  let event: unknown;
+  let input: unknown;
 
   beforeEach(() => {
-    event = {
+    input = {
       foo: 'foo',
       bar: 0,
       baz: false,
     };
   });
 
-  it('unwraps the event when it is of the expected type', () => {
-    try {
-      const result = unwrap(event, isMyEvent).next().value;
-      expect(result).toBe(event);
-    } catch (err) {
+  describe('unwrap', () => {
+
+    it('unwraps the input when it is of the expected type', () => {
+      try {
+        const result = unwrap(input, isMyInput).next().value;
+        expect(result).toBe(input);
+      } catch (err) {
+        fail();
+      }
+    });
+
+    it('unwraps the input when it comes directly from SQS', () => {
       fail();
-    }
+    });
+
+    it('unwraps the input when it comes from SNS via SQS', () => {
+      fail();
+    });
+
   });
 
-  it('unwraps the event when it comes directly from SQS', () => {
-    fail();
+  describe('unwrapAll', () => {
+
+    it('unwraps the input to an array of the expected type when it is of the expected type', () => {
+      try {
+        const result = unwrapAll(input, isMyInput);
+        expect(result).toHaveLength(1);
+        expect(result[0]).toBe(input);
+      } catch (err) {
+        console.error(err);
+        fail();
+      }
+    });
+
+    it('throws an error when the input cannot be unwrapped', () => {
+      input = {};
+      try {
+        unwrapAll(input, isMyInput);
+        fail();
+      } catch (err) {
+        console.error(err);
+      }
+    });
   });
 
-  it('unwraps the event when it comes from SNS via SQS', () => {
-    fail();
+  describe('unwrapFirst', () => {
+    it('unwraps the first input when it is of the expected type', () => {
+      try {
+        const result = unwrapFirst(input, isMyInput);
+        expect(result).toBe(input);
+      } catch (err) {
+        fail();
+      }
+    });
+
+    it('unwraps the first input when it comes directly from SQS', () => {
+      fail();
+    });
+
+    it('unwraps the first input when it comes from SNS via SQS', () => {
+      fail();
+    });
   });
 
-});
-
-describe('unwrapAll', () => {
-  it('unwraps the event to an array of the expected type when it is of the expected type', () => {
-    fail();
-  });
-});
-
-describe('unwrapFirst', () => {
-  it('unwraps the first event when it is of the expected type', () => {
-    fail();
-  });
-
-  it('unwraps the first event when it comes directly from SQS', () => {
-    fail();
-  });
-
-  it('unwraps the first event when it comes from SNS via SQS', () => {
-    fail();
-  });
 });
