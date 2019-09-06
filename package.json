@@ -1,6 +1,6 @@
 {
     "name": "sns-sqs-unwrap",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Utility for unwrapping events from SNS/SQS",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
