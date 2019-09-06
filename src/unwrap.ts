@@ -10,10 +10,38 @@ const defaults: UnwrapOptions = {
 };
 
 /**
+ * Unwraps at most a single instance of T from the input, otherwise
+ * throws an error.
+ * @param input the input to unwrap
+ * @param isType the type guard to assert the type of the result
+ */
+export function unwrapFirst<T>(input: unknown, isType: TypeGuard<T>): T {
+  return unwrap(input, isType).next().value;
+}
+
+/**
+ * Unwraps all instances of T into an array, otherwise throws an error.
+ * @param input the input to unwrap
+ * @param isType the type guard to assert the type of the result
+ */
+export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
+  const requests: T[] = [];
+  const unwrapper = unwrap(input, isType);
+
+  let request = unwrapper.next();
+  do {
+    requests.push(request.value);
+    request = unwrapper.next();
+  } while (!request.done);
+
+  return requests;
+}
+
+/**
  * Unwraps an unknown event received by the Lambda into an event of the expected
  * type, attempting to remove any metadata attached by SNS and SQS if necessary.
  * Throws any error if it cannot parse the event into the given type.
- * @param input the event to unwrap.
+ * @param input the input to unwrap.
  * @param isType the type guard to assert the type of the result
  */
 export function* unwrap<T>(input: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
@@ -83,21 +111,4 @@ function unwrapSnsMessage<T>(message: SNSMessage, isType: TypeGuard<T>): T {
   }
 
   return request;
-}
-
-export function unwrapFirst<T>(input: unknown, isType: TypeGuard<T>): T {
-  return unwrap(input, isType).next().value;
-}
-
-export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
-  const requests: T[] = [];
-  const unwrapper = unwrap(input, isType);
-
-  let request = unwrapper.next();
-  do {
-    requests.push(request.value);
-    request = unwrapper.next();
-  } while (!request.done);
-
-  return requests;
 }
