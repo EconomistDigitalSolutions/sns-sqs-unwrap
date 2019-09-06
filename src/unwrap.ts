@@ -14,6 +14,7 @@ const defaults: UnwrapOptions = {
  * type, attempting to remove any metadata attached by SNS and SQS if necessary.
  * Throws any error if it cannot parse the event into the given type.
  * @param input the event to unwrap.
+ * @param isType the type guard to assert the type of the result
  */
 export function* unwrap<T>(input: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
 
