@@ -7,7 +7,7 @@
     "scripts": {
         "lint": "tslint -c tslint.json 'src/**/*.ts'",
         "clean": "rm -rf lib",
-        "build": "npm run lint && tsc",
+        "build": "tsc",
         "clean-build": "npm run clean && npm run build",
         "test": "jest --coverage",
         "prepublishOnly": "npm run clean-build"
