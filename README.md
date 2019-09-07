@@ -1,3 +1,5 @@
+[![codecov](https://github.com/DomParfitt/sns-sqs-unwrap/workflows/Node%20CI/badge.svg)](https://github.com/DomParfitt/sns-sqs-unwrap/actions)
+[![codecov](https://codecov.io/gh/DomParfitt/sns-sqs-unwrap/branch/master/graph/badge.svg)](https://codecov.io/gh/DomParfitt/sns-sqs-unwrap)
 # SNS/SQS Unwrap
 Utility package for unwrapping events from SNS/SQS.
 
@@ -8,15 +10,15 @@ The consequence of this is that the actual request to your service gets stringif
 ## Usage
 ### unwrap
 ```typescript
-unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined>
+function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined>
 ```
 
 ### unwrapAll
 ```typescript
-unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T
+function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T
 ```
 
 ### unwrapFirst
 ```typescript
-unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[]
+function unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[]
 ```
