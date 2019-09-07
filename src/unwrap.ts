@@ -1,14 +1,6 @@
 import { TypeGuard } from 'generic-type-guard';
 import { isSnsMessage, isSqsEvent, SNSMessage, SQSEvent } from './guards';
 
-export interface UnwrapOptions {
-  debug: boolean;
-}
-
-const defaults: UnwrapOptions = {
-  debug: false,
-};
-
 /**
  * Unwraps at most a single instance of T from the input, otherwise
  * throws an error.
@@ -44,7 +36,7 @@ export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
  * @param input the input to unwrap.
  * @param isType the type guard to assert the type of the result
  */
-export function* unwrap<T>(input: unknown, isType: TypeGuard<T>, opts: UnwrapOptions = defaults): Generator<T, T, undefined> {
+export function* unwrap<T>(input: unknown, isType: TypeGuard<T>): Generator<T, T, undefined> {
 
   // If the event is of the given type we can just return it
   if (isType(input)) {
