@@ -1,5 +1,4 @@
-import { TypeGuard } from 'generic-type-guard';
-import { isSnsMessage, isSqsEvent, SNSMessage, SQSEvent } from './guards';
+import { isSnsMessage, isSqsEvent, SNSMessage, SQSEvent, TypeGuard } from './guards';
 
 /**
  * Unwraps at most a single instance of T from the input, otherwise
