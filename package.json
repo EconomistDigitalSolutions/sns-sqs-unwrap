@@ -2,6 +2,10 @@
     "name": "sns-sqs-unwrap",
     "version": "0.1.0",
     "description": "Utility for unwrapping events from SNS/SQS",
+    "keywords": [
+        "sns",
+        "sqs"
+    ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "scripts": {
