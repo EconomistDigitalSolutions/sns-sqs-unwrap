@@ -1,10 +1,12 @@
 {
-    "name": "sns-sqs-unwrap",
+    "name": "@economist/sns-sqs-unwrap",
     "version": "0.1.0",
     "description": "Utility for unwrapping events from SNS/SQS",
     "keywords": [
         "sns",
-        "sqs"
+        "sqs",
+        "aws",
+        "lambda"
     ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -17,11 +19,12 @@
         "prepublishOnly": "npm run clean-build"
     },
     "author": {
-        "name": "Dom Parfitt"
+        "name": "Dom Parfitt",
+        "email": "dominicparfitt@economist.com"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/DomParfitt/sns-sqs-unwrap.git"
+        "url": "https://github.com/EconomistDigitalSolutions/sns-sqs-unwrap.git"
     },
     "license": "MIT",
     "dependencies": {
