@@ -1,5 +1,3 @@
-[![codecov](https://github.com/DomParfitt/sns-sqs-unwrap/workflows/Node%20CI/badge.svg)](https://github.com/DomParfitt/sns-sqs-unwrap/actions)
-[![codecov](https://codecov.io/gh/DomParfitt/sns-sqs-unwrap/branch/master/graph/badge.svg)](https://codecov.io/gh/DomParfitt/sns-sqs-unwrap)
 # SNS/SQS Unwrap
 Utility package for unwrapping events from SNS/SQS.
 
