@@ -18,19 +18,25 @@ jobs:
     executor: node8
     steps:
       - checkout_and_install
-      - npm run lint 
+      - run:
+          name: Lint
+          command: npm run lint 
 
   test:
     executor: node8
     steps:
       - checkout_and_install
-      - npm test
+      - run:
+          name: Test
+          command: npm test
 
   build:
     executor: node8
     steps:
       - checkout_and_install
-      - npm run build
+      - run: 
+          name: Build
+          command: npm run build
 
 workflows:
   version: 2
