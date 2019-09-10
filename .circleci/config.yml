@@ -1,0 +1,41 @@
+version: 2.1
+
+executors:
+  node8:
+    docker:
+      - image: circleci/node:8.16.1
+
+commands:
+  checkout_and_install:
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm i
+
+jobs:
+  lint:
+    executor: node8
+    steps:
+      - checkout_and_install
+      - npm run lint 
+
+  test:
+    executor: node8
+    steps:
+      - checkout_and_install
+      - npm test
+
+  build:
+    executor: node8
+    steps:
+      - checkout_and_install
+      - npm run build
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - lint
+      - test
+      - build
