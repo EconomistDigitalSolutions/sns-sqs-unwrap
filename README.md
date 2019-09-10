@@ -1,3 +1,6 @@
+![CircleCI](https://img.shields.io/circleci/build/github/EconomistDigitalSolutions/sns-sqs-unwrap)
+![Codecov](https://img.shields.io/codecov/c/github/EconomistDigitalSolutions/sns-sqs-unwrap)
+
 # SNS/SQS Unwrap
 Utility package for unwrapping events from SNS/SQS.
 
