@@ -33,7 +33,7 @@ jobs:
           name: Test
           command: npm test
       - codecov/upload:
-          file: test-results/lcov.info
+          file: project/test-results/lcov.info
 
   build:
     executor: node8
