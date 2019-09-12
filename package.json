@@ -1,6 +1,6 @@
 {
-    "name": "@economist/sns-sqs-unwrap",
-    "version": "0.1.0",
+    "name": "sns-sqs-unwrap",
+    "version": "0.2.0",
     "description": "Utility for unwrapping events from SNS/SQS",
     "keywords": [
         "sns",
