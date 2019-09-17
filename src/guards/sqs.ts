@@ -1,29 +1,17 @@
-import { isArray, IsInterface, isString } from "generic-type-guard";
+import * as t from "io-ts";
 
-export interface SQSRecord {
-  body: string;
-}
+const SQSRecord = t.type({
+  body: t.string,
+});
 
-/**
- * Type guard for SQSRecords
- */
-export const isSqsRecord =
-  new IsInterface()
-    .withProperties({
-      body: isString,
-    })
-    .get();
+export type SQSRecord = t.TypeOf<typeof SQSRecord>;
 
-export interface SQSEvent {
-  Records: SQSRecord[];
-}
+export const isSqsRecord = SQSRecord.is;
 
-/**
- * Type guard for SQSEvents
- */
-export const isSqsEvent =
-  new IsInterface()
-    .withProperties({
-      Records: isArray(isSqsRecord),
-    })
-    .get();
+const SQSEvent = t.type({
+  Records: t.array(SQSRecord),
+});
+
+export type SQSEvent = t.TypeOf<typeof SQSEvent>;
+
+export const isSqsEvent = SQSEvent.is;

@@ -1,20 +1,15 @@
-import { isBoolean, IsInterface, isNumber, isString, TypeGuard } from "generic-type-guard";
+import * as t from "io-ts";
 import { unwrap, unwrapAll, unwrapFirst } from "../unwrap";
 
-interface MyInput {
-  foo: string;
-  bar: number;
-  baz: boolean;
-}
+const MyInput = t.type({
+  foo: t.string,
+  bar: t.number,
+  baz: t.boolean,
+});
 
-const isMyInput: TypeGuard<MyInput> =
-  new IsInterface()
-    .withProperties({
-      foo: isString,
-      bar: isNumber,
-      baz: isBoolean,
-    })
-    .get();
+type MyInput = t.TypeOf<typeof MyInput>;
+
+const isMyInput = MyInput.is;
 
 describe('unwrap.ts', () => {
 

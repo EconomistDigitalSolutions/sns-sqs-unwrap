@@ -1,15 +1,9 @@
-import { IsInterface, isString, TypeGuard } from "generic-type-guard";
+import * as t from "io-ts";
 
-export interface SNSMessage {
-  Message: string;
-}
+const SNSMessage = t.type({
+  Message: t.string,
+});
 
-/**
- * Type guard for SNSMessages
- */
-export const isSnsMessage: TypeGuard<SNSMessage> =
-  new IsInterface()
-    .withProperties({
-      Message: isString,
-    })
-    .get();
+export type SNSMessage = t.TypeOf<typeof SNSMessage>;
+
+export const isSnsMessage = SNSMessage.is;
