@@ -11,15 +11,15 @@ The consequence of this is that the actual request to your service gets stringif
 ## Usage
 ### unwrap
 ```typescript
-function* unwrap<T>(event: unknown, isType: TypeGuard<T>): Generator<T, T, undefined>
+function* unwrap<T>(input: unknown, isType: (value: unknown) => value is T): Generator<T, T, undefined>
 ```
 
 ### unwrapAll
 ```typescript
-function unwrapFirst<T>(event: unknown, isType: TypeGuard<T>): T
+function unwrapAll<T>(input: unknown, isType: (value: unknown) => value is T): T[]
 ```
 
 ### unwrapFirst
 ```typescript
-function unwrapAll<T>(event: unknown, isType: TypeGuard<T>): T[]
+function unwrapFirst<T>(input: unknown, isType: (value: unknown) => value is T): T
 ```
