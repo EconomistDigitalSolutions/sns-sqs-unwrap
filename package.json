@@ -67,7 +67,8 @@
         "reporters": [
             "default",
             "jest-junit"
-        ]
+        ],
+        "verbose": true
     },
     "jest-junit": {
         "outputDirectory": "test-results/jest",
