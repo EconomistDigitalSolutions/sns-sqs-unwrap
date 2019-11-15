@@ -1,6 +1,6 @@
 {
     "name": "sns-sqs-unwrap",
-    "version": "0.2.2",
+    "version": "1.0.0",
     "description": "Utility for unwrapping events from SNS/SQS",
     "keywords": [
         "sns",
