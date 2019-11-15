@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { unwrap, unwrapAll, unwrapFirst } from "../unwrap";
+import { unwrap, unwrapAll, unwrapGenerator } from "../unwrap";
 
 const MyInput = t.type({
   foo: t.string,
@@ -23,11 +23,11 @@ describe('unwrap.ts', () => {
     };
   });
 
-  describe('unwrap', () => {
+  describe('unwrapGenerator', () => {
 
     it('unwraps the input when it is of the expected type', () => {
       try {
-        const result = unwrap(input, isMyInput).next().value;
+        const result = unwrapGenerator(input, isMyInput).next().value;
         expect(result).toEqual(input);
       } catch (err) {
         fail();
@@ -38,7 +38,7 @@ describe('unwrap.ts', () => {
       const unwrappedInput = input;
       input = wrapForSqs(input);
       try {
-        const result = unwrap(input, isMyInput).next().value;
+        const result = unwrapGenerator(input, isMyInput).next().value;
         expect(result).toEqual(unwrappedInput);
       } catch (err) {
         fail();
@@ -49,7 +49,7 @@ describe('unwrap.ts', () => {
       const unwrappedInput = input;
       input = wrapForSqs(input);
       try {
-        const unwrapper = unwrap(input, isMyInput).next();
+        const unwrapper = unwrapGenerator(input, isMyInput).next();
         const result = unwrapper.value;
         expect(result).toEqual(unwrappedInput);
       } catch (err) {
@@ -61,7 +61,7 @@ describe('unwrap.ts', () => {
       const unwrappedInput = input;
       input = wrapForSns(input);
       try {
-        const result = unwrap(input, isMyInput).next().value;
+        const result = unwrapGenerator(input, isMyInput).next().value;
         expect(result).toEqual(unwrappedInput);
       } catch (err) {
         fail();
@@ -71,10 +71,10 @@ describe('unwrap.ts', () => {
     it('throws an error when the input is not the expected type or an SQS Event', () => {
       input = {};
       try {
-        unwrap(input, isMyInput).next();
+        unwrapGenerator(input, isMyInput).next();
         fail();
       } catch (err) {
-        console.error(err);
+        expect(err.message).toBe('Unable to unwrap the provided event.');
       }
     });
 
@@ -82,30 +82,30 @@ describe('unwrap.ts', () => {
       input = wrapForSqs(input);
       (input as any).Records = [];
       try {
-        unwrap(input, isMyInput).next();
+        unwrapGenerator(input, isMyInput).next();
         fail();
       } catch (err) {
-        console.error(err);
+        expect(err.message).toBe('No Records provided on the event.');
       }
     });
 
     it('throws an error when an SQS Record is not the expected type or an SNS Message', () => {
       input = wrapForSqs({});
       try {
-        unwrap(input, isMyInput).next();
+        unwrapGenerator(input, isMyInput).next();
         fail();
       } catch (err) {
-        console.error(err);
+        expect(err.message).toBe('Unable to unwrap the SQS payload.');
       }
     });
 
     it('throws an error when the SNS Message payload is not the expected type', () => {
       input = wrapForSns({});
       try {
-        unwrap(input, isMyInput).next();
+        unwrapGenerator(input, isMyInput).next();
         fail();
       } catch (err) {
-        console.error(err);
+        expect(err.message).toBe('Unable to unwrap the SNS payload into the expected type.');
       }
     });
   });
@@ -128,15 +128,15 @@ describe('unwrap.ts', () => {
         unwrapAll(input, isMyInput);
         fail();
       } catch (err) {
-        console.error(err);
+        expect(err.message).toBe('Unable to unwrap the provided event.');
       }
     });
   });
 
-  describe('unwrapFirst', () => {
+  describe('unwrap', () => {
     it('unwraps the first input when it is of the expected type', () => {
       try {
-        const result = unwrapFirst(input, isMyInput);
+        const result = unwrap(input, isMyInput);
         expect(result).toEqual(input);
       } catch (err) {
         fail();
@@ -147,7 +147,7 @@ describe('unwrap.ts', () => {
       const unwrappedInput = input;
       input = wrapForSqs(input);
       try {
-        const result = unwrapFirst(input, isMyInput);
+        const result = unwrap(input, isMyInput);
         expect(result).toEqual(unwrappedInput);
       } catch (err) {
         fail();
@@ -158,7 +158,7 @@ describe('unwrap.ts', () => {
       const unwrappedInput = input;
       input = wrapForSns(input);
       try {
-        const result = unwrapFirst(input, isMyInput);
+        const result = unwrap(input, isMyInput);
         expect(result).toEqual(unwrappedInput);
       } catch (err) {
         fail();

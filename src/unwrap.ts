@@ -1,13 +1,13 @@
 import { isSnsMessage, isSqsEvent, SNSMessage, SQSEvent, TypeGuard } from './guards';
 
 /**
- * Unwraps at most a single instance of T from the input, otherwise
+ * Unwraps the first instance of T from the input, otherwise
  * throws an error.
  * @param input the input to unwrap
  * @param isType the type guard to assert the type of the result
  */
-export function unwrapFirst<T>(input: unknown, isType: TypeGuard<T>): T {
-  return unwrap(input, isType).next().value;
+export function unwrap<T>(input: unknown, isType: TypeGuard<T>): T {
+  return unwrapGenerator(input, isType).next().value;
 }
 
 /**
@@ -17,7 +17,7 @@ export function unwrapFirst<T>(input: unknown, isType: TypeGuard<T>): T {
  */
 export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
   const requests: T[] = [];
-  const unwrapper = unwrap(input, isType);
+  const unwrapper = unwrapGenerator(input, isType);
 
   let request = unwrapper.next();
   do {
@@ -29,13 +29,13 @@ export function unwrapAll<T>(input: unknown, isType: TypeGuard<T>): T[] {
 }
 
 /**
- * Unwraps an unknown event received by the Lambda into an event of the expected
+ * Generator to unwrap an unknown event received by the Lambda into an event of the expected
  * type, attempting to remove any metadata attached by SNS and SQS if necessary.
  * Throws any error if it cannot parse the event into the given type.
  * @param input the input to unwrap.
  * @param isType the type guard to assert the type of the result
  */
-export function* unwrap<T>(input: unknown, isType: TypeGuard<T>): Generator<T, T, undefined> {
+export function* unwrapGenerator<T>(input: unknown, isType: TypeGuard<T>): Generator<T, T, undefined> {
 
   // If the event is of the given type we can just return it
   if (isType(input)) {
@@ -57,7 +57,7 @@ export function* unwrap<T>(input: unknown, isType: TypeGuard<T>): Generator<T, T
     yield* unwrapSqsEvent(input, isType);
   }
 
-  throw new Error('unable to unwrap SQS event into expected type');
+  throw new Error('Unable to unwrap the provided event.');
 
 }
 
@@ -78,13 +78,13 @@ function* unwrapSqsEvent<T>(sqsEvent: SQSEvent, isType: TypeGuard<T>): Generator
     }
 
     if (!isSnsMessage(message)) {
-      throw new Error('unable to unwrap SNS message into expected type');
+      throw new Error('Unable to unwrap the SQS payload.');
     }
 
     yield unwrapSnsMessage(message, isType);
   }
 
-  throw new Error('no records');
+  throw new Error('No Records provided on the event.');
 }
 
 /**
@@ -98,7 +98,7 @@ function unwrapSnsMessage<T>(message: SNSMessage, isType: TypeGuard<T>): T {
   const request = JSON.parse(message.Message);
 
   if (!isType(request)) {
-    throw new Error('unable to unwrap event into expected type');
+    throw new Error('Unable to unwrap the SNS payload into the expected type.');
   }
 
   return request;

@@ -1,1 +1,1 @@
-export { unwrap, unwrapAll, unwrapFirst } from './unwrap';
+export { unwrapGenerator, unwrapAll, unwrap } from './unwrap';
